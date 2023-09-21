@@ -13,12 +13,12 @@ else
   version=$1
   commit_hash=$2
 fi
-
-echo vertion commit_hash
-
+dock_name='Dockerfile'
+if [ $# -eq 3 ]; then
+    dock_name=$3
 appname="chat-app"
 # Build the Docker image
-docker build -t ${appname}:v${version} .
+docker build -t ${appname}:v${version} . -f ${dock_name}
 
 # Tag the image with the commit hash
 git tag v${version} ${commit_hash}
