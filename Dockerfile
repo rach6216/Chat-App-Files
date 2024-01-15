@@ -20,6 +20,7 @@ ENV TZ 'Israel'
 ENV FLASK_ENV development
 # copy the content of the local src directory to the working directory
 COPY . .
+EXPOSE 8080
 # Helth check
 HEALTHCHECK CMD ["curl", "-f", "http://localhost:5000/health"] INTERVAL=10s TIMEOUT=3s
 # command to run on container start

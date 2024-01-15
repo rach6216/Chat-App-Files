@@ -14,6 +14,11 @@ else
   commit_hash=$2
 fi
 
+if [ $(git rev-list --quiet $commit_hash)  ]; then
+    echo "No such commit hash"
+    exit 1
+fi
+
 version="v$version"
 dock_name='Dockerfile'
 if [ $# -eq 3 ]; then
@@ -50,3 +55,17 @@ if [[ "$push_tag" == "y" ]]; then
 else
     echo "Tag not pushed to GitHub."
 fi
+
+read -p "Do you want to push the tag to GCR? (y/n): " push_gcr
+if [[ "$push_gcr" == "y" ]]; then
+    gcloud config set auth/impersonate_service_account artifact-admin-sa@grunitech-mid-project.iam.gserviceaccount.com
+    gcloud auth configure-docker me-west1-docker.pkg.dev
+    docker tag $appname:$version \
+    me-west1-docker.pkg.dev/grunitech-mid-project/rachelfabian-chat-app-images/$appname:$version
+    docker push me-west1-docker.pkg.dev/grunitech-mid-project/rachelfabian-chat-app-images/chat-app:${version} 
+    cloud config unset auth/impersonate_service_account
+else
+    echo "Image not pushed to Artifact Registry."
+fi
+
+
